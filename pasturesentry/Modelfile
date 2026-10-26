@@ -1,0 +1,10 @@
+FROM /home/yash/.config/Antigravity-Profiles/Account-1/HOME/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf
+PARAMETER temperature 0.2
+PARAMETER stop "<|im_end|>"
+TEMPLATE """{{ if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ .Response }}<|im_end|>
+"""

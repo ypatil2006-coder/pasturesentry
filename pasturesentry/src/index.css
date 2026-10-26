@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F4EEDD;
+    background-image: radial-gradient(#000000 12%, transparent 13%);
+    background-size: 16px 16px;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    color: #000000;
+  }
+}
+
+/* Halftone dotted texture */
+.halftone-bg {
+  background-image: radial-gradient(#000000 14%, transparent 15%);
+  background-size: 12px 12px;
+}
+
+.halftone-dense {
+  background-image: radial-gradient(#000000 22%, transparent 23%);
+  background-size: 8px 8px;
+}
+
+/* Diagonal action slashes */
+.speed-lines {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 18px,
+    rgba(0, 0, 0, 0.04) 18px,
+    rgba(0, 0, 0, 0.04) 22px
+  );
+}
+
+/* Comic Striped Bar */
+.striped-bar-red {
+  background: repeating-linear-gradient(
+    45deg,
+    #FF3B30,
+    #FF3B30 14px,
+    #FF6B64 14px,
+    #FF6B64 28px
+  );
+}
+
+.striped-bar-yellow {
+  background: repeating-linear-gradient(
+    45deg,
+    #FFE600,
+    #FFE600 14px,
+    #FFF066 14px,
+    #FFF066 28px
+  );
+}
+
+/* Tactile button mechanical press */
+.btn-comic {
+  transition: all 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.btn-comic:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.btn-comic:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.btn-comic-lg {
+  transition: all 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.btn-comic-lg:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.btn-comic-lg:active {
+  transform: translate(6px, 6px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+/* Speech bubble pointers */
+.speech-bubble,
+.speech-bubble-bottom {
+  position: relative;
+}
+.speech-bubble::after,
+.speech-bubble-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 28px;
+  border-width: 12px 12px 0;
+  border-style: solid;
+  border-color: #000000 transparent;
+  display: block;
+  width: 0;
+}
+.speech-bubble::before,
+.speech-bubble-bottom::before {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 31px;
+  border-width: 9px 9px 0;
+  border-style: solid;
+  border-color: #FFFFFF transparent;
+  display: block;
+  width: 0;
+  z-index: 2;
+}
+
+/* Custom scrollbar comic */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F4EEDD;
+  border-left: 2px solid #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFE600;
+  border: 2px solid #000000;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFD000;
+}
