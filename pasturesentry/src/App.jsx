@@ -50,6 +50,12 @@ export function App() {
     const params = new URLSearchParams(window.location.search);
     const sub = params.get('subdomain') || params.get('agent') || params.get('view');
 
+    // On Vercel / Cloud deployments, strictly lock to Landing Page only (no offline dashboard)
+    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+    if (isCloudDeploy) {
+      return { view: 'LANDING', mode: 'SPLIT', drawer: false, dispatch: false };
+    }
+
     // 1. Hostname Subdomains (e.g. cockpit.localhost, scheduler.localhost, dispatch.localhost)
     if (host.startsWith('cockpit.') || host.startsWith('app.')) return { view: 'WORKSTATION', mode: 'SPLIT', drawer: false, dispatch: false };
     if (host.startsWith('scheduler.')) return { view: 'WORKSTATION', mode: 'SPLIT', drawer: true, dispatch: false };
@@ -108,6 +114,13 @@ export function App() {
 
   const launchWorkstation = (targetHash = '#cockpit') => {
     soundManager.playLockBeep();
+    const host = window.location.hostname.toLowerCase();
+    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+    if (isCloudDeploy) {
+      alert("⚡ PastureSentry Mission Control runs 100% locally on ranch edge hardware (NVIDIA Jetson / local edge laptop) with offline Ollama and RTSP chokepoint cameras.\n\nSee our GitHub repository for the complete local offline setup!");
+      window.open('https://github.com/ypatil2006-coder/pasturesentry', '_blank');
+      return;
+    }
     window.location.hash = targetHash;
     applyRoute(targetHash);
   };
@@ -120,8 +133,9 @@ export function App() {
     setIsDispatcherOpen(false);
   };
 
-  // If in Landing Page view, render the Comic Neubrutalism landing page!
-  if (currentView === 'LANDING') {
+  // If in Landing Page view (or deployed on Vercel), render the Comic Neubrutalism landing page!
+  const isCloudHost = window.location.hostname.toLowerCase().includes('vercel.app') || window.location.hostname.toLowerCase().includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+  if (currentView === 'LANDING' || isCloudHost) {
     return <LandingPage onLaunchWorkstation={launchWorkstation} />;
   }
 

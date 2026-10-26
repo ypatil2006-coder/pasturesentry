@@ -21,29 +21,32 @@ logger = logging.getLogger("pasturesentry.ollama")
 class OllamaGateway:
     """Async gateway to local Ollama inference service with zero-downtime fallback."""
 
-    def __init__(self, host: str = "http://localhost:11434", default_model: str = "qwen2.5-coder") -> None:
+    def __init__(self, host: str = "http://localhost:11435", default_model: str = "qwen2.5-coder") -> None:
         self.host = host.rstrip("/")
+        self.candidate_hosts = ["http://localhost:11435", "http://localhost:11434"]
         self.preferred_model = default_model
         self.timeout = httpx.Timeout(10.0, connect=2.0)
 
     async def get_available_model(self) -> Optional[str]:
-        """Query Ollama daemon for installed models or return None if offline/empty."""
-        try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                res = await client.get(f"{self.host}/api/tags")
-                if res.status_code == 200:
-                    data = res.json()
-                    models = [m.get("name") for m in data.get("models", [])]
-                    if not models:
-                        return None
-                    # Look for qwen2.5-coder or llama3.2 variants
-                    for target in ("qwen2.5-coder", "llama3.2", "qwen", "llama"):
-                        for m in models:
-                            if target in m:
-                                return m
-                    return models[0]
-        except Exception as e:
-            logger.warning(f"Ollama connection check failed ({e}). Operating in deterministic edge fallback mode.")
+        """Query Ollama daemon for installed models across candidate ports."""
+        for candidate in self.candidate_hosts:
+            try:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    res = await client.get(f"{candidate}/api/tags")
+                    if res.status_code == 200:
+                        self.host = candidate
+                        data = res.json()
+                        models = [m.get("name") for m in data.get("models", [])]
+                        if not models:
+                            continue
+                        # Look for qwen2.5-coder or llama3.2 variants
+                        for target in ("qwen2.5-coder", "llama3.2", "qwen", "llama"):
+                            for m in models:
+                                if target in m:
+                                    return m
+                        return models[0]
+            except Exception as e:
+                logger.debug(f"Ollama check on {candidate} failed: {e}")
         return None
 
     @staticmethod

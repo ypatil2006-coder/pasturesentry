@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd pasturesentry && npm install && npm run build",
+  "outputDirectory": "pasturesentry/dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
