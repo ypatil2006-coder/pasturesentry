@@ -51,7 +51,7 @@ export function App() {
     const sub = params.get('subdomain') || params.get('agent') || params.get('view');
 
     // On Vercel / Cloud deployments, strictly lock to Landing Page only (no offline dashboard)
-    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || (!['localhost', '127.0.0.1'].includes(host)) || import.meta.env.VITE_LANDING_ONLY === 'true';
     if (isCloudDeploy) {
       return { view: 'LANDING', mode: 'SPLIT', drawer: false, dispatch: false };
     }
@@ -115,10 +115,9 @@ export function App() {
   const launchWorkstation = (targetHash = '#cockpit') => {
     soundManager.playLockBeep();
     const host = window.location.hostname.toLowerCase();
-    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+    const isCloudDeploy = host.includes('vercel.app') || host.includes('now.sh') || (!['localhost', '127.0.0.1'].includes(host)) || import.meta.env.VITE_LANDING_ONLY === 'true';
     if (isCloudDeploy) {
-      alert("⚡ PastureSentry Mission Control runs 100% locally on ranch edge hardware (NVIDIA Jetson / local edge laptop) with offline Ollama and RTSP chokepoint cameras.\n\nSee our GitHub repository for the complete local offline setup!");
-      window.open('https://github.com/ypatil2006-coder/pasturesentry', '_blank');
+      window.location.href = 'https://github.com/ypatil2006-coder/pasturesentry';
       return;
     }
     window.location.hash = targetHash;
@@ -133,8 +132,9 @@ export function App() {
     setIsDispatcherOpen(false);
   };
 
-  // If in Landing Page view (or deployed on Vercel), render the Comic Neubrutalism landing page!
-  const isCloudHost = window.location.hostname.toLowerCase().includes('vercel.app') || window.location.hostname.toLowerCase().includes('now.sh') || import.meta.env.VITE_LANDING_ONLY === 'true';
+  // If in Landing Page view (or deployed on Vercel/cloud), render the Comic Neubrutalism landing page strictly!
+  const host = window.location.hostname.toLowerCase();
+  const isCloudHost = host.includes('vercel.app') || host.includes('now.sh') || (!['localhost', '127.0.0.1'].includes(host)) || import.meta.env.VITE_LANDING_ONLY === 'true';
   if (currentView === 'LANDING' || isCloudHost) {
     return <LandingPage onLaunchWorkstation={launchWorkstation} />;
   }
